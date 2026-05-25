@@ -166,6 +166,15 @@ ul {
     gap: 4px;
 }
 
+.nav-logo {
+    height: 120px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+
 .logo-raksha {
     color: var(--primary-blue);
 }
@@ -789,6 +798,14 @@ ul {
 }
 
 @media (max-width: 768px) {
+
+    .nav-logo {
+        height: 50px;
+        height: 50px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+    }
     .nav-links {
         display: none;
     }
