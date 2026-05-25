@@ -118,10 +118,10 @@ ul {
 /* Buttons */
 .btn {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 5px 20px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 12px;
     transition: var(--transition);
     cursor: pointer;
     border: none;
