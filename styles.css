@@ -278,7 +278,6 @@ ul {
     position: relative;
     z-index: 2;
     max-width: 850px;
-    transform: translateX(-100px);
     /* Nudged a little to the left */
 }
 
