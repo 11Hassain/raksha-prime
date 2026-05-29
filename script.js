@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Full Page Language Translation via Google Translate
     const langSelector = document.querySelector('.language-selector');
     if (langSelector) {
-        // Automatically sync our custom dropdown with the current google language cookie on page load
+        // Sync custom dropdown with current googtrans cookie on load
         if (document.cookie.includes('googtrans=')) {
             const match = document.cookie.match(/googtrans=\/en\/([a-z]{2})/);
             if (match && match[1]) langSelector.value = match[1];
@@ -49,16 +49,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const lang = e.target.value;
 
             if (lang === 'en') {
-                // Safest & most reliable way to perfectly revert google translation to original English
+                // Clear the translation cookies and reload to restore English
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=' + window.location.hostname + '; path=/;';
                 window.location.reload();
             } else {
-                const googleSelect = document.querySelector('.goog-te-combo');
-                if (googleSelect) {
-                    googleSelect.value = lang;
-                    googleSelect.dispatchEvent(new Event('change'));
+                // Step 1: Set the googtrans cookie so reload always works as fallback
+                document.cookie = `googtrans=/en/${lang}; path=/`;
+                // Also set for the actual domain (needed when hosted on Netlify etc.)
+                if (window.location.hostname && window.location.hostname !== '') {
+                    document.cookie = `googtrans=/en/${lang}; domain=${window.location.hostname}; path=/`;
                 }
+
+                // Step 2: Try to trigger Google Translate directly (avoids reload)
+                // Retry because .goog-te-combo loads asynchronously
+                const tryTranslate = (attempts) => {
+                    const googleSelect = document.querySelector('.goog-te-combo');
+                    if (googleSelect) {
+                        googleSelect.value = lang;
+                        googleSelect.dispatchEvent(new Event('change'));
+                    } else if (attempts < 20) {
+                        setTimeout(() => tryTranslate(attempts + 1), 150);
+                    } else {
+                        // Google Translate never loaded — reload with cookie already set
+                        window.location.reload();
+                    }
+                };
+                tryTranslate(0);
             }
         });
     }
